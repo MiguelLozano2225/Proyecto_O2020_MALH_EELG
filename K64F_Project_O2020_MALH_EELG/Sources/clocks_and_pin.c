@@ -1,0 +1,54 @@
+/*
+ * clocks_and_pin.c
+ *
+ *  Created on: Oct 25, 2020
+ *      Author: migue
+ */
+
+#include "clocks_and_pin.h"
+#include "SPI.h"
+void Init_pin_clocks(void)
+{
+	SIM_SCGC4 |= SIM_SCGC4_I2C0_MASK | SIM_SCGC4_UART3_MASK; 
+	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK |SIM_SCGC5_PORTC_MASK| SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK | SIM_SCGC5_LPTMR_MASK;
+	SIM_SCGC6 |= SIM_SCGC6_SPI0_MASK ;
+	
+	PORTD_PCR3  |= PORT_PCR_MUX(2); //Select PTD3 as SPI0_MISO
+	PORTD_PCR2  |= PORT_PCR_MUX(2); //Select PTD2 as SPI0_MOSI
+	PORTD_PCR1  |= PORT_PCR_MUX(2); //Select PTD1 as SPI0_SCK
+	PORTD_PCR0  |= PORT_PCR_MUX(1); //Select PTD0 as GPIO for  CS0
+	PORTC_PCR4  |= PORT_PCR_MUX(1); //Select PTC4  as GPIO for CS1
+	PORTC_PCR12 |= PORT_PCR_MUX(1); //Select PTC12 as GPIO for CS2
+	
+	PORTE_PCR24 |= PORT_PCR_MUX(5); /*| PORT_PCR_PE_MASK | PORT_PCR_PS_MASK; //Select the PTE24 as I2C0_SCL*/
+	PORTE_PCR25 |= PORT_PCR_MUX(5);/* | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK; //Select the PTE24 as I2C0_SDA*/
+	PORTC_PCR16 |= PORT_PCR_MUX(3);	//Select the PTC16 as UART3_RX
+	PORTC_PCR17 |= PORT_PCR_MUX(3); //Select the PTC17 as UART3_TX
+	
+	PORTB_PCR2  |= PORT_PCR_MUX(1) | PORT_PCR_ODE_MASK;	/*Select the PTB2  as GPIO*/
+	PORTB_PCR3  |= PORT_PCR_MUX(1) | PORT_PCR_ODE_MASK;	/*Select the PTB3  as GPIO*/
+	PORTB_PCR10 |= PORT_PCR_MUX(1) | PORT_PCR_ODE_MASK; /*Select the PTB10 as GPIO*/
+	
+	
+	GPIOB_PDDR |= (1<<2)				// PTB2 as OUTPUT
+			   |  (1<<3)				// PTB3 as OUTPUT
+			   |  (1<<10);				// PTB10 as OUTPUT
+	
+	GPIOD_PDDR |= 1;					//PTD0 as OUTPUT
+	GPIOC_PDDR |= (1<<4) 				//PTC4 as OUTPUT
+			   | (1<<12);				//PTC12 as OUTPUT
+	
+	CS0_HIGH;
+	CS1_HIGH;
+	CS2_HIGH;
+	
+	PORTB_PCR22 |= PORT_PCR_MUX (1);
+	PORTB_PCR21 |= PORT_PCR_MUX (1);
+	PORTE_PCR26 |= PORT_PCR_MUX (1);
+	
+	GPIOB_PDDR   |= (1<<22) | (1<<21);
+	GPIOE_PDDR   |= 1<<26;
+	
+	GPIOB_PDOR   |= (1<<22) | (1<<21);
+	GPIOE_PDOR   |= 1<<26;
+}
